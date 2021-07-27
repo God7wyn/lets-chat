@@ -10,4 +10,4 @@ npm install
 npm run start
 ```
 
-The server should start and be running on port 7000
+The server should start and be running on port: 7000
