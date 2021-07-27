@@ -1,4 +1,11 @@
-# chat-app-socket-server
+# Server Using Socket.io
 
-This is a socket-server project needs front end application to operate this.
-front end application repository name react-chat-app-front-end
+## Project setup
+```
+npm install
+```
+
+### Start Development server
+```
+npm run start
+```
