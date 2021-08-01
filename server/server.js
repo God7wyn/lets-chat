@@ -43,6 +43,14 @@ io.on("connection", (socket) => {
 		const socketId = users[data.receiver];
 		io.to(socketId).emit("new_message", data);
 	});
+
+	socket.on("view_message", (sender, receiver) => {
+		console.log(sender);
+
+		const socketId = users[sender];
+		console.log(socketId);
+		io.to(socketId).emit("view", sender, receiver);
+	});
 });
 
 httpServer.listen(PORT, () => {

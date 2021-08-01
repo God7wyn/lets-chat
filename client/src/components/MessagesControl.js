@@ -28,15 +28,73 @@ const MessagesControl = (props) => {
 									key={index}
 								>
 									<div className="user-pic">
-										<img src={require(`../users/${msg.avatar}`).default} />
+										<img src={require(`../users/${msg.avatar}`).default} alt={""} />
 									</div>
 									<div>
 										{msg.media && msg.media.image ? (
 											<div className="image-container">
-												<img src={msg.media.content} width="200" alt="" />
+												<img src={msg.media.content} width="200" alt={""} />
+												{msg.view === true ? (
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														style={{ margin: "0px 3px 0px 3px" }}
+														viewBox="0 0 16 15"
+														width="11"
+														height="10"
+													>
+														<path
+															fill="currentColor"
+															d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"
+														></path>
+													</svg>
+												) : (
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														viewBox="0 0 16 15"
+														style={{ margin: "0px 3px 0px 3px" }}
+														width="11"
+														height="10"
+													>
+														<path
+															fill="currentColor"
+															d="M10.91 3.316l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"
+														></path>
+													</svg>
+												)}
 											</div>
 										) : null}
-										{msg.message !== "" ? <div className="message-text">{msg.message}</div> : null}
+										{msg.message !== "" ? (
+											<div className="message-text">
+												{msg.message}
+												{msg.view === true ? (
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														style={{ margin: "0px 3px 0px 3px" }}
+														viewBox="0 0 16 15"
+														width="11"
+														height="10"
+													>
+														<path
+															fill="currentColor"
+															d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"
+														></path>
+													</svg>
+												) : (
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														viewBox="0 0 16 15"
+														style={{ margin: "0px 3px 0px 3px" }}
+														width="11"
+														height="10"
+													>
+														<path
+															fill="currentColor"
+															d="M10.91 3.316l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"
+														></path>
+													</svg>
+												)}
+											</div>
+										) : null}
 									</div>
 								</li>
 						  ))
@@ -62,7 +120,7 @@ const MessagesControl = (props) => {
 								const reader = new FileReader();
 								reader.readAsDataURL(file);
 								reader.onload = function () {
-									console.log(reader.result);
+									// console.log(reader.result);
 									setMedia({
 										image: true,
 										content: reader.result,
@@ -80,7 +138,7 @@ const MessagesControl = (props) => {
 						</label>
 					</div>
 					<button>
-						<img src={sendIcon} />
+						<img src={sendIcon} alt={""} />
 						<span style={{ display: "inline-block" }}>Send</span>
 					</button>
 				</form>

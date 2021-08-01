@@ -26,15 +26,13 @@ function App() {
 	};
 
 	const gotoBottom = () => {
-		const el = document.querySelector(".message-area");
+		const el = document.querySelector(".message-area ul");
 		if (el) {
 			el.scrollTop = el.scrollHeight;
 		}
 	};
 
 	const onCreateUser = () => {
-		console.log(username);
-
 		socket.emit("new_user", username);
 		const a = parseInt(Math.floor(Math.random() * 8) + 1) + ".png";
 		setAvatar(a);
@@ -71,9 +69,9 @@ function App() {
 		const key = sortNames(username, receiver);
 		const tempGroupMessage = { ...groupMessage };
 		if (key in tempGroupMessage) {
-			tempGroupMessage[key] = [...tempGroupMessage[key], { ...data, view: true }];
+			tempGroupMessage[key] = [...tempGroupMessage[key], data];
 		} else {
-			tempGroupMessage[key] = [{ ...data, view: true }];
+			tempGroupMessage[key] = [data];
 		}
 
 		setGroupMessage({ ...tempGroupMessage });
@@ -88,14 +86,16 @@ function App() {
 
 		// james, dennis [james-dennis] => [m1, m2, m3], dennis-james // all the m's here are the messages
 		// james, geogie [james-geogie] => [m1, m2, m3]
-		//dennis, geogie [dennis-geogie] => [m1, m2, m3]
+		// dennis, geogie [dennis-geogie] => [m1, m2, m3]
 	};
 
 	const checkUnseenMessages = (receiver) => {
 		const key = sortNames(username, receiver);
 		let unseenMessages = [];
 		if (key in groupMessage) {
-			unseenMessages = groupMessage[key].filter((msg) => !msg.view);
+			unseenMessages = groupMessage[key].filter((msg) => {
+				return !msg.view && msg.sender !== username;
+			});
 		}
 
 		return unseenMessages.length;
@@ -103,21 +103,31 @@ function App() {
 
 	useEffect(() => {
 		socket.on("all_users", (users) => {
-			console.log({ users });
 			setUsers(users);
 		});
 
+		socket.on("view", (sender, receiver) => {
+			setGroupMessage((prevGroupMessage) => {
+				let messages = null;
+				const key = sortNames(sender, receiver);
+
+				if (key in prevGroupMessage) {
+					messages = prevGroupMessage[key].map((msg) => (!msg.view ? { ...msg, view: true } : msg));
+					prevGroupMessage[key] = [...messages];
+				}
+
+				return { ...prevGroupMessage };
+			});
+		});
+
 		socket.on("new_message", (data) => {
-			console.log(data);
-
-			console.log({ rec: receiverRef.current, data }, "asfedfee");
-
 			setGroupMessage((prevGroupMessage) => {
 				const messages = { ...prevGroupMessage };
 				const key = sortNames(data.sender, data.receiver);
 
 				if (receiverRef.current === data.sender) {
 					data.view = true;
+					socket.emit("view_message", data.sender, data.receiver);
 				}
 
 				if (key in messages) {
@@ -133,13 +143,22 @@ function App() {
 
 	useEffect(() => {
 		//here we are going to update view count of selected user = receiver
-		updateMessageView();
-	}, [receiver]);
+		if (receiverRef.current !== null) {
+			updateMessageView();
+			socket.emit("view_message", receiver, username);
+		}
+	}, [receiver, step]);
 
 	const updateMessageView = () => {
 		const key = sortNames(username, receiver);
 		if (key in groupMessage) {
-			const messages = groupMessage[key].map((msg) => (!msg.view ? { ...msg, view: true } : msg));
+			const messages = groupMessage[key].map((msg) => {
+				if (msg.view === false && msg.sender === receiverRef.current) {
+					return { ...msg, view: true };
+				} else {
+					return msg;
+				}
+			});
 
 			groupMessage[key] = [...messages];
 
@@ -155,8 +174,6 @@ function App() {
 			}
 		}
 	}, [groupMessage]);
-
-	console.log(groupMessage);
 
 	return (
 		<div className="App">
